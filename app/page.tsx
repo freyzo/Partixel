@@ -1,0 +1,299 @@
+"use client"
+
+import { useState, useRef, useEffect, useCallback } from "react"
+import { ImageUploader } from "@/components/image-uploader"
+import { EffectControls } from "@/components/effect-controls"
+import { ImageCanvas, type ImageCanvasHandle } from "@/components/image-canvas"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+import { Download, Video, RotateCcw, Loader2, Github } from "lucide-react"
+
+type RecordingState = "idle" | "recording" | "done"
+
+export default function Home() {
+  const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(null)
+  const [halftoneSize, setHalftoneSize] = useState(4)
+  const [contrast, setContrast] = useState(1.5)
+  const [accentColor, setAccentColor] = useState("#00d9ff")
+  const [mouseRadius, setMouseRadius] = useState(100)
+  const [repulsionStrength, setRepulsionStrength] = useState(1.0)
+  const [returnSpeed, setReturnSpeed] = useState(0.3)
+  const [accentProbability, setAccentProbability] = useState(0.03)
+  const [sizeVariation, setSizeVariation] = useState(0.3)
+  const canvasHandleRef = useRef<ImageCanvasHandle>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Recording state
+  const [recordingState, setRecordingState] = useState<RecordingState>("idle")
+  const [recordingProgress, setRecordingProgress] = useState(0)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const isFormingRef = useRef(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval>>()
+
+  useEffect(() => {
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+    img.onload = () => {
+      setUploadedImage(img)
+    }
+    img.src = "/IMG_0136.jpg"
+  }, [])
+
+  const handleImageUpload = (image: HTMLImageElement) => {
+    setUploadedImage(image)
+    setRecordingState("idle")
+    setVideoUrl(null)
+    setRecordingProgress(0)
+    isFormingRef.current = true
+  }
+
+  const handleFormationComplete = useCallback(() => {
+    isFormingRef.current = false
+  }, [])
+
+  const handleDownloadImage = () => {
+    const canvas = canvasHandleRef.current?.canvas
+    if (!canvas) return
+    const link = document.createElement("a")
+    link.download = "shader-effect.png"
+    link.href = canvas.toDataURL()
+    link.click()
+  }
+
+  const handleReplay = () => {
+    if (!canvasHandleRef.current) return
+    isFormingRef.current = true
+    canvasHandleRef.current.startFormation()
+  }
+
+  const handleRecordVideo = useCallback(() => {
+    const canvas = canvasHandleRef.current?.canvas
+    if (!canvas) return
+
+    // Clean up previous URL
+    if (videoUrl) {
+      URL.revokeObjectURL(videoUrl)
+      setVideoUrl(null)
+    }
+
+    chunksRef.current = []
+    setRecordingState("recording")
+    setRecordingProgress(0)
+
+    // Start the formation animation
+    isFormingRef.current = true
+    canvasHandleRef.current.startFormation()
+
+    // Capture the canvas stream at 30fps
+    const stream = canvas.captureStream(30)
+    const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+      ? "video/webm;codecs=vp9"
+      : "video/webm"
+
+    const recorder = new MediaRecorder(stream, {
+      mimeType,
+      videoBitsPerSecond: 5_000_000,
+    })
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) {
+        chunksRef.current.push(e.data)
+      }
+    }
+
+    recorder.onstop = () => {
+      const blob = new Blob(chunksRef.current, { type: mimeType })
+      const url = URL.createObjectURL(blob)
+      setVideoUrl(url)
+      setRecordingState("done")
+      setRecordingProgress(100)
+
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+      }
+    }
+
+    mediaRecorderRef.current = recorder
+    recorder.start(100) // Collect data every 100ms
+
+    // Progress timer
+    const duration = 8000
+    const startTime = performance.now()
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = performance.now() - startTime
+      const progress = Math.min(100, (elapsed / duration) * 100)
+      setRecordingProgress(progress)
+    }, 50)
+
+    // Stop recording after formation completes plus a small buffer
+    setTimeout(() => {
+      if (recorder.state === "recording") {
+        recorder.stop()
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+      }
+    }, duration + 500)
+  }, [videoUrl])
+
+  const handleDownloadVideo = () => {
+    if (!videoUrl) return
+    const link = document.createElement("a")
+    link.download = "particle-formation.webm"
+    link.href = videoUrl
+    link.click()
+  }
+
+  const handleUploadNewImage = () => {
+    fileInputRef.current?.click()
+  }
+
+  // Clean up blob URL on unmount
+  useEffect(() => {
+    return () => {
+      if (videoUrl) {
+        URL.revokeObjectURL(videoUrl)
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+      }
+    }
+  }, [videoUrl])
+
+  return (
+    <main className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Partixel</h1>
+        </header>
+
+        <div className="grid lg:grid-cols-[1fr_400px] gap-6">
+          <div className="space-y-4">
+            {!uploadedImage ? (
+              <ImageUploader onImageUpload={handleImageUpload} />
+            ) : (
+              <>
+                <ImageCanvas
+                  ref={canvasHandleRef}
+                  image={uploadedImage}
+                  halftoneSize={halftoneSize}
+                  contrast={contrast}
+                  accentColor={accentColor}
+                  mouseRadius={mouseRadius}
+                  repulsionStrength={repulsionStrength}
+                  returnSpeed={returnSpeed}
+                  accentProbability={accentProbability}
+                  sizeVariation={sizeVariation}
+                  onFormationComplete={handleFormationComplete}
+                />
+
+                {/* Recording progress */}
+                {recordingState === "recording" && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="relative flex items-center justify-center">
+                        <span className="absolute h-3 w-3 rounded-full bg-red-500 animate-ping opacity-75" />
+                        <span className="relative h-3 w-3 rounded-full bg-red-500" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground">
+                        Recording... {Math.round(recordingProgress)}%
+                      </span>
+                    </div>
+                    <Progress value={recordingProgress} className="h-2" />
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={handleDownloadImage} variant="outline" className="gap-2">
+                    <Download className="w-4 h-4" />
+                    Download Image
+                  </Button>
+
+                  <Button
+                    onClick={handleReplay}
+                    variant="outline"
+                    className="gap-2"
+                    disabled={recordingState === "recording"}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Replay
+                  </Button>
+
+                  <Button
+                    onClick={handleRecordVideo}
+                    className="gap-2"
+                    disabled={recordingState === "recording"}
+                  >
+                    {recordingState === "recording" ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Video className="w-4 h-4" />
+                    )}
+                    {recordingState === "recording" ? "Recording..." : "Record Video"}
+                  </Button>
+
+                  {recordingState === "done" && videoUrl && (
+                    <Button onClick={handleDownloadVideo} className="gap-2 bg-green-600 hover:bg-green-700 text-white">
+                      <Download className="w-4 h-4" />
+                      Download Video (.webm)
+                    </Button>
+                  )}
+
+                  <Button variant="outline" onClick={handleUploadNewImage}>
+                    Upload New Image
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      const reader = new FileReader()
+                      reader.onload = (event) => {
+                        const img = new Image()
+                        img.crossOrigin = "anonymous"
+                        img.onload = () => handleImageUpload(img)
+                        img.src = event.target?.result as string
+                      }
+                      reader.readAsDataURL(file)
+                    }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          {uploadedImage && (
+            <EffectControls
+              halftoneSize={halftoneSize}
+              contrast={contrast}
+              accentColor={accentColor}
+              mouseRadius={mouseRadius}
+              repulsionStrength={repulsionStrength}
+              returnSpeed={returnSpeed}
+              accentProbability={accentProbability}
+              sizeVariation={sizeVariation}
+              onHalftoneSizeChange={setHalftoneSize}
+              onContrastChange={setContrast}
+              onAccentColorChange={setAccentColor}
+              onMouseRadiusChange={setMouseRadius}
+              onRepulsionStrengthChange={setRepulsionStrength}
+              onReturnSpeedChange={setReturnSpeed}
+              onAccentProbabilityChange={setAccentProbability}
+              onSizeVariationChange={setSizeVariation}
+            />
+          )}
+        </div>
+        <footer className="mt-12 py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+          <Github className="w-4 h-4" />
+          freyazou
+        </footer>
+      </div>
+    </main>
+  )
+}
