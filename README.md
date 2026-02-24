@@ -1,5 +1,11 @@
 # Partixel
 
+## Demo
+
+![Demo](sample_tiny.gif)
+
+Watch particles animate from random positions to form a coherent image, demonstrating the physics simulation and interactive capabilities.
+
 ## Why This Project
 Partixel was created to transform ordinary images into mesmerizing interactive particle halftone formations. Traditional image filters can be static and predictable—this project brings photos to life with dynamic particle physics, creating an engaging visual experience where pixels react to mouse interaction and animate into formation. Whether for artistic expression, creative portfolios, or unique social media content, Partixel makes it easy to generate stunning visual effects and export them as images or video recordings.
 
@@ -109,6 +115,3 @@ No API keys or setup required - works out of the box with default sample image.
 
 Created by [@freyazou](https://github.com/freyazou)
 
-**Resources**
-- [Next.js Documentation](https://nextjs.org/docs)
-- [HTML5 Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
