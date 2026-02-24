@@ -1,5 +1,7 @@
 # Partixel
 
+**🔗 Live Demo:** https://partixel-gl17mb190-suzie9880s-projects.vercel.app/
+
 ## Demo
 
 ![Demo](https://github.com/freyzo/Partixel/blob/main/public/sample_tiny.gif?raw=true)
