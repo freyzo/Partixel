@@ -47,6 +47,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              function removeBadge() {
+                const badges = document.querySelectorAll('[data-nextjs-dev-tools-button], [class*="nextjs"], [id*="nextjs"]');
+                badges.forEach(b => b.remove());
+                const all = document.querySelectorAll('*');
+                all.forEach(el => {
+                  if (el.textContent === 'N' && el.children.length === 0) {
+                    const style = getComputedStyle(el);
+                    if (style.position === 'fixed') el.remove();
+                  }
+                });
+              }
+              setInterval(removeBadge, 100);
+              setTimeout(removeBadge, 0);
+            })();
+          `
+        }} />
+      </head>
       <body className={`font-sans antialiased touch-none`}>
         {children}
         <Analytics />
