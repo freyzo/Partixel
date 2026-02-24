@@ -131,8 +131,16 @@
 
   /* Hide Next.js DevTools indicator */
   [data-nextjs-dev-tools-button],
+  [data-nextjs-dev-tools],
   #next-logo,
-  .nextjs-dev-tools {
+  .nextjs-dev-tools,
+  .nextjs-badge,
+  [class*="nextjs"],
+  body>div:last-child>div:last-child,
+  body>div>div>div:last-child,
+  [style*="z-index: 9999"],
+  [style*="z-index: 99999"],
+  [style*="position: fixed"]:not([role="dialog"]):not([role="alert"]):not([role="alertdialog"]) {
     display: none !important;
   }
 }
