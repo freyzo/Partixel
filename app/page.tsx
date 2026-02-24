@@ -6,15 +6,7 @@ import { EffectControls } from "@/components/effect-controls"
 import { ImageCanvas, type ImageCanvasHandle } from "@/components/image-canvas"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Download, Video, RotateCcw, Loader2, Github, Info } from "lucide-react"
+import { Download, Video, RotateCcw, Loader2, Github } from "lucide-react"
 
 type RecordingState = "idle" | "recording" | "done"
 
@@ -300,44 +292,9 @@ export default function Home() {
             </div>
           )}
         </div>
-        <footer className="mt-16 py-8 text-center text-lg text-white/70 flex items-center justify-center gap-4">
+        <footer className="mt-16 py-8 text-center text-lg text-white/70 flex items-center justify-center gap-3">
           <Github className="w-6 h-6 text-white/50" />
           <span className="font-medium">freyazou</span>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Info className="w-5 h-5" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="glass-card border-white/10">
-              <DialogHeader>
-                <DialogTitle className="text-2xl text-white">About Partixel</DialogTitle>
-                <DialogDescription className="text-white/60">
-                  Transform images into interactive particle halftone formations
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 text-white/80">
-                <p>
-                  Partixel is an interactive image processor that converts photos into dynamic
-                  particle halftone visualizations. Upload any image and watch as it transforms
-                  into thousands of interactive particles.
-                </p>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-white">Features:</h4>
-                  <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li>Interactive particle physics with mouse/touch</li>
-                    <li>Real-time parameter adjustment</li>
-                    <li>Video recording of animations</li>
-                    <li>Image export as PNG</li>
-                    <li>Works on all devices - desktop, tablet, mobile</li>
-                  </ul>
-                </div>
-                <p className="text-sm text-white/50">
-                  Created by freyazou • Built with Next.js & React
-                </p>
-              </div>
-            </DialogContent>
-          </Dialog>
         </footer>
       </div>
     </main>

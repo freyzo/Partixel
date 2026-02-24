@@ -51,10 +51,7 @@ export function EffectControls({
     >
       <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
         <div>
-          <h2 className="text-lg lg:text-xl font-semibold text-white mb-2 lg:mb-4 flex items-center gap-2">
-            Effect Controls
-            <span className="text-xs font-normal text-cyan-400/70 bg-cyan-400/10 px-2 py-0.5 rounded-full">Adjust me</span>
-          </h2>
+          <h2 className="text-lg lg:text-xl font-semibold text-white mb-2 lg:mb-4">Effect Controls</h2>
         </div>
 
         <div className="space-y-4">
