@@ -163,10 +163,11 @@ export default function Home() {
   }, [videoUrl])
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Partixel</h1>
+        <header className="mb-10 text-center">
+          <h1 className="text-5xl font-bold text-white mb-3 text-glow tracking-tight">Partixel</h1>
+          <p className="text-white/50 text-sm">Liquid glass image transformation</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_400px] gap-4 lg:gap-6">
@@ -191,17 +192,17 @@ export default function Home() {
 
                 {/* Recording progress */}
                 {recordingState === "recording" && (
-                  <div className="space-y-2">
+                  <div className="glass-card p-4 space-y-3">
                     <div className="flex items-center gap-3">
                       <div className="relative flex items-center justify-center">
-                        <span className="absolute h-3 w-3 rounded-full bg-red-500 animate-ping opacity-75" />
-                        <span className="relative h-3 w-3 rounded-full bg-red-500" />
+                        <span className="absolute h-3 w-3 rounded-full bg-red-500 animate-ping opacity-75 shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                        <span className="relative h-3 w-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
                       </div>
-                      <span className="text-sm font-medium text-foreground">
+                      <span className="text-sm font-medium text-white/90">
                         Recording... {Math.round(recordingProgress)}%
                       </span>
                     </div>
-                    <Progress value={recordingProgress} className="h-2" />
+                    <Progress value={recordingProgress} />
                   </div>
                 )}
 
@@ -292,8 +293,8 @@ export default function Home() {
             </div>
           )}
         </div>
-        <footer className="mt-16 py-8 text-center text-lg text-foreground flex items-center justify-center gap-3">
-          <Github className="w-6 h-6" />
+        <footer className="mt-16 py-8 text-center text-lg text-white/70 flex items-center justify-center gap-3">
+          <Github className="w-6 h-6 text-white/50" />
           <span className="font-medium">freyazou</span>
         </footer>
       </div>

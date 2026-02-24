@@ -56,14 +56,16 @@ export function ImageUploader({ onImageUpload }: ImageUploaderProps) {
 
   return (
     <Card
-      className="border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer"
+      className="glass-card border-2 border-dashed border-white/20 hover:border-cyan-400/50 transition-all duration-300 cursor-pointer group"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
       <label className="flex flex-col items-center justify-center min-h-[500px] cursor-pointer p-8">
-        <Upload className="w-16 h-16 text-muted-foreground mb-4" />
-        <h3 className="text-xl font-semibold text-foreground mb-2">Upload an image</h3>
-        <p className="text-muted-foreground text-center mb-4">Drag and drop or click to select</p>
+        <div className="w-20 h-20 rounded-2xl glass-button flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <Upload className="w-10 h-10 text-cyan-400" />
+        </div>
+        <h3 className="text-2xl font-semibold text-white mb-2">Upload an image</h3>
+        <p className="text-white/50 text-center mb-4">Drag and drop or click to select</p>
         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
       </label>
     </Card>
