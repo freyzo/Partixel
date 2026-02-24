@@ -6,7 +6,15 @@ import { EffectControls } from "@/components/effect-controls"
 import { ImageCanvas, type ImageCanvasHandle } from "@/components/image-canvas"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Download, Video, RotateCcw, Loader2, Github } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Download, Video, RotateCcw, Loader2, Github, Info } from "lucide-react"
 
 type RecordingState = "idle" | "recording" | "done"
 
@@ -292,9 +300,48 @@ export default function Home() {
             </div>
           )}
         </div>
-        <footer className="mt-16 py-8 text-center text-lg text-white/70 flex items-center justify-center gap-3">
-          <Github className="w-6 h-6 text-white/50" />
-          <span className="font-medium">freyazou</span>
+        <footer className="mt-16 py-8 text-center text-lg text-white/70 flex items-center justify-center gap-6">
+          <a
+            href="https://github.com/freyazou"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 hover:text-white transition-colors"
+          >
+            <Github className="w-6 h-6" />
+            <span className="font-medium">freyazou</span>
+          </a>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors text-base">
+                <Info className="w-5 h-5" />
+                About
+              </button>
+            </DialogTrigger>
+            <DialogContent className="glass-card border-white/20 max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-white">About Partixel</DialogTitle>
+                <DialogDescription className="text-white/70">
+                  Transform images into interactive particle halftone formations.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 text-white/80 py-4">
+                <p>
+                  Partixel converts your images into dynamic particle systems.
+                  Each pixel becomes a physical particle that responds to your touch.
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-sm text-white/60">
+                  <li>Upload any image to transform</li>
+                  <li>Particles react to mouse/touch movement</li>
+                  <li>Customize colors, sizes, and physics</li>
+                  <li>Record and download animations</li>
+                </ul>
+                <p className="text-sm text-white/50 pt-2">
+                  Built with Next.js, React, and HTML5 Canvas.
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
         </footer>
       </div>
     </main>
