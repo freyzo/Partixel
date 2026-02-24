@@ -2,7 +2,7 @@
 
 ## Demo
 
-![Demo](sample_tiny.gif)
+![Demo](https://github.com/freyzo/Partixel/blob/main/public/sample_tiny.gif?raw=true)
 
 Watch particles animate from random positions to form a coherent image, demonstrating the physics simulation and interactive capabilities.
 
