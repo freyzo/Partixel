@@ -167,7 +167,6 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <header className="mb-10 text-center">
           <h1 className="text-5xl font-bold text-white mb-3 text-glow tracking-tight">Partixel</h1>
-          <p className="text-white/50 text-sm">Liquid glass image transformation</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_400px] gap-4 lg:gap-6">
