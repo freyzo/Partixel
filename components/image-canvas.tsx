@@ -183,6 +183,76 @@ export const ImageCanvas = forwardRef<ImageCanvasHandle, ImageCanvasProps>(
 
     const handleMouseLeave = () => {
       setIsHovering(false)
+      mouseRef.current.x = -1000
+      mouseRef.current.y = -1000
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault()
+      if (!canvasRef.current) return
+      const rect = canvasRef.current.getBoundingClientRect()
+      const touch = e.touches[0]
+      const newX = touch.clientX - rect.left
+      const newY = touch.clientY - rect.top
+
+      lastMoveTimeRef.current = Date.now()
+
+      if (isFirstMoveRef.current) {
+        mouseRef.current.x = newX
+        mouseRef.current.y = newY
+        mouseRef.current.prevX = newX
+        mouseRef.current.prevY = newY
+        isFirstMoveRef.current = false
+        return
+      }
+
+      mouseRef.current.prevX = mouseRef.current.x
+      mouseRef.current.prevY = mouseRef.current.y
+      mouseRef.current.x = newX
+      mouseRef.current.y = newY
+
+      const velX = newX - mouseRef.current.prevX
+      const velY = newY - mouseRef.current.prevY
+      const speed = Math.sqrt(velX * velX + velY * velY)
+      const distance = speed
+      const steps = Math.max(1, Math.ceil(distance / 10))
+
+      for (let i = 0; i < steps; i++) {
+        const t = i / steps
+        const interpX = mouseRef.current.prevX + velX * t
+        const interpY = mouseRef.current.prevY + velY * t
+        mouseTrailRef.current.push({
+          x: interpX,
+          y: interpY,
+          timestamp: Date.now(),
+          strength: Math.min(speed / 10, 1),
+        })
+      }
+
+      const now = Date.now()
+      mouseTrailRef.current = mouseTrailRef.current.filter((point) => now - point.timestamp < 150)
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault()
+      if (!canvasRef.current) return
+      const rect = canvasRef.current.getBoundingClientRect()
+      const touch = e.touches[0]
+      mouseRef.current.x = touch.clientX - rect.left
+      mouseRef.current.y = touch.clientY - rect.top
+      mouseRef.current.prevX = mouseRef.current.x
+      mouseRef.current.prevY = mouseRef.current.y
+      isFirstMoveRef.current = false
+      setIsHovering(true)
+      lastMoveTimeRef.current = Date.now()
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault()
+      setIsHovering(false)
+      isFirstMoveRef.current = true
+      mouseRef.current.x = -1000
+      mouseRef.current.y = -1000
     }
 
     useEffect(() => {
@@ -192,8 +262,8 @@ export const ImageCanvas = forwardRef<ImageCanvasHandle, ImageCanvasProps>(
       const ctx = canvas.getContext("2d", { willReadFrequently: true })
       if (!ctx) return
 
-      const MAX_WIDTH = 720
-      const MAX_HEIGHT = 480
+      const MAX_WIDTH = Math.min(720, window.innerWidth - 32)
+      const MAX_HEIGHT = Math.min(480, window.innerHeight - 200)
 
       const scaleX = MAX_WIDTH / image.width
       const scaleY = MAX_HEIGHT / image.height
@@ -405,6 +475,9 @@ export const ImageCanvas = forwardRef<ImageCanvasHandle, ImageCanvasProps>(
       canvas.addEventListener("mousemove", handleMouseMove)
       canvas.addEventListener("mouseenter", handleMouseEnter)
       canvas.addEventListener("mouseleave", handleMouseLeave)
+      canvas.addEventListener("touchstart", handleTouchStart, { passive: false })
+      canvas.addEventListener("touchmove", handleTouchMove, { passive: false })
+      canvas.addEventListener("touchend", handleTouchEnd, { passive: false })
 
       return () => {
         if (animationFrameRef.current) {
@@ -413,6 +486,9 @@ export const ImageCanvas = forwardRef<ImageCanvasHandle, ImageCanvasProps>(
         canvas.removeEventListener("mousemove", handleMouseMove)
         canvas.removeEventListener("mouseenter", handleMouseEnter)
         canvas.removeEventListener("mouseleave", handleMouseLeave)
+        canvas.removeEventListener("touchstart", handleTouchStart)
+        canvas.removeEventListener("touchmove", handleTouchMove)
+        canvas.removeEventListener("touchend", handleTouchEnd)
       }
     }, [
       image,

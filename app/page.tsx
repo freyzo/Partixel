@@ -169,8 +169,8 @@ export default function Home() {
           <h1 className="text-4xl font-bold text-foreground mb-2">Partixel</h1>
         </header>
 
-        <div className="grid lg:grid-cols-[1fr_400px] gap-6">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_400px] gap-4 lg:gap-6">
+          <div className="space-y-4 order-1">
             {!uploadedImage ? (
               <ImageUploader onImageUpload={handleImageUpload} />
             ) : (
@@ -206,10 +206,11 @@ export default function Home() {
                 )}
 
                 {/* Action buttons */}
-                <div className="flex flex-wrap gap-2">
-                  <Button onClick={handleDownloadImage} variant="outline" className="gap-2">
+                <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
+                  <Button onClick={handleDownloadImage} variant="outline" className="gap-2 flex-1 sm:flex-none min-w-[120px]">
                     <Download className="w-4 h-4" />
-                    Download Image
+                    <span className="hidden sm:inline">Download</span>
+                    <span className="sm:hidden">Save</span>
                   </Button>
 
                   <Button
@@ -232,18 +233,18 @@ export default function Home() {
                     ) : (
                       <Video className="w-4 h-4" />
                     )}
-                    {recordingState === "recording" ? "Recording..." : "Record Video"}
+                    {recordingState === "recording" ? "Recording..." : "Record"}
                   </Button>
 
                   {recordingState === "done" && videoUrl && (
                     <Button onClick={handleDownloadVideo} className="gap-2 bg-green-600 hover:bg-green-700 text-white">
                       <Download className="w-4 h-4" />
-                      Download Video (.webm)
+                      Get Video
                     </Button>
                   )}
 
-                  <Button variant="outline" onClick={handleUploadNewImage}>
-                    Upload New Image
+                  <Button variant="outline" onClick={handleUploadNewImage} className="flex-1 sm:flex-none">
+                    New Image
                   </Button>
                   <input
                     ref={fileInputRef}
@@ -269,29 +270,31 @@ export default function Home() {
           </div>
 
           {uploadedImage && (
-            <EffectControls
-              halftoneSize={halftoneSize}
-              contrast={contrast}
-              accentColor={accentColor}
-              mouseRadius={mouseRadius}
-              repulsionStrength={repulsionStrength}
-              returnSpeed={returnSpeed}
-              accentProbability={accentProbability}
-              sizeVariation={sizeVariation}
-              onHalftoneSizeChange={setHalftoneSize}
-              onContrastChange={setContrast}
-              onAccentColorChange={setAccentColor}
-              onMouseRadiusChange={setMouseRadius}
-              onRepulsionStrengthChange={setRepulsionStrength}
-              onReturnSpeedChange={setReturnSpeed}
-              onAccentProbabilityChange={setAccentProbability}
-              onSizeVariationChange={setSizeVariation}
-            />
+            <div className="order-2 lg:order-2">
+              <EffectControls
+                halftoneSize={halftoneSize}
+                contrast={contrast}
+                accentColor={accentColor}
+                mouseRadius={mouseRadius}
+                repulsionStrength={repulsionStrength}
+                returnSpeed={returnSpeed}
+                accentProbability={accentProbability}
+                sizeVariation={sizeVariation}
+                onHalftoneSizeChange={setHalftoneSize}
+                onContrastChange={setContrast}
+                onAccentColorChange={setAccentColor}
+                onMouseRadiusChange={setMouseRadius}
+                onRepulsionStrengthChange={setRepulsionStrength}
+                onReturnSpeedChange={setReturnSpeed}
+                onAccentProbabilityChange={setAccentProbability}
+                onSizeVariationChange={setSizeVariation}
+              />
+            </div>
           )}
         </div>
-        <footer className="mt-12 py-6 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-          <Github className="w-4 h-4" />
-          freyazou
+        <footer className="mt-16 py-8 text-center text-lg text-foreground flex items-center justify-center gap-3">
+          <Github className="w-6 h-6" />
+          <span className="font-medium">freyazou</span>
         </footer>
       </div>
     </main>

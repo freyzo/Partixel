@@ -45,15 +45,12 @@ export function EffectControls({
   const [isHovered, setIsHovered] = useState(false)
   return (
     <Card
-      className="p-6 space-y-6 h-fit sticky top-4"
+      className="p-4 lg:p-6 space-y-4 lg:space-y-6 h-fit lg:sticky lg:top-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div>
-        <h2 className="text-xl font-semibold mb-4">Effect Controls</h2>
-        <p className={`text-sm text-muted-foreground transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-          Adjust parameters and hover over the image to interact
-        </p>
+        <h2 className="text-lg lg:text-xl font-semibold mb-2 lg:mb-4">Effect Controls</h2>
       </div>
 
       <div className="space-y-4">
